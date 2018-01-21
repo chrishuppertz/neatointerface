@@ -1,0 +1,130 @@
+<!--
+  Author: Christian Huppertz
+
+  Desciption: 
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="The inventar system you waited for.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Neato for Geeks</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-blue.min.css" /> 
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mdl-selectfield.min.css">
+
+    <style>
+      .mdl-layout {
+        align-items: center;
+        justify-content: center;
+      }
+      .mdl-layout__content {
+        padding: 10px;
+        flex: none;
+      }
+
+      .material-icons, .icon-text {
+      vertical-align: middle;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+      <!--<canvas id="map" width="1000" height="1000" style="border:1px solid #000000;">
+        Fallback-Inhalt
+      </canvas>-->
+      <div class="neato-card-wide mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+          
+        </div>
+        <div class="mdl-card__supporting-text">
+            <i class="material-icons" id="iconState">near_me</i><a id="stateText">STATE</a>
+            <i class="material-icons">schedule</i><a id="scheduleText">NEXT_SCHEDULE</a>
+            <i class="material-icons">error_outline</i><a id="errorText"></a>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="cleanHouseBtn">
+            Clean House
+          </a>
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="cleanSpotBtn">
+            Clean Spot
+          </a>
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="stopBtn">
+            Stop
+          </a>
+        </div>
+      </div>
+    </div>
+      <!--<canvas id="map" width="1000" height="1000" style="border:1px solid #000000;">
+        Fallback-Inhalt
+      </canvas>-->
+
+    
+      <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+
+        <div class="neato-card-wide mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title">
+            
+          </div>
+          <div class="mdl-card__supporting-text">
+            <ul class="demo-list-item mdl-list">
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  Bryan Cranston
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  Aaron Paul
+                </span>
+              </li>
+              <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                  Bob Odenkirk
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="saveBtn">
+              Save
+            </a>
+          </div>
+      </div>
+    </div>
+
+
+
+
+    
+
+
+  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.2/sweetalert2.all.min.js"></script>
+  
+  <script src="js/overview.js"></script>
+
+  </body>
+</html>
