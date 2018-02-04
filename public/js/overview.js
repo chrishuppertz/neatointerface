@@ -22,7 +22,12 @@ const cleanHouseBtn = document.getElementById("cleanHouseBtn");
 const cleanSpotBtn = document.getElementById("cleanSpotBtn");
 const stopBtn = document.getElementById("stopBtn");
 const scheduleBtn = document.getElementById("scheduleOnOffBtn");
+const searchBtn = document.getElementById("searchBtn");
 
+
+searchBtn.addEventListener('click', () => {
+    makeRequest('playsound', null);
+});
 
 cleanHouseBtn.addEventListener('click', () => {
     makeRequest('cleanhouse', null);
