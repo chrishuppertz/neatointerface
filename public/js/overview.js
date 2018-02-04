@@ -29,6 +29,15 @@ const stopBtn = document.getElementById("stopBtn");
 const scheduleBtn = document.getElementById("scheduleOnOffBtn");
 const searchBtn = document.getElementById("searchBtn");
 
+// Day label
+const monLabel = document.getElementById("monLabel");
+const tueLabel = document.getElementById("tueLabel");
+const wedLabel = document.getElementById("wedLabel");
+const thuLabel = document.getElementById("thuLabel");
+const friLabel = document.getElementById("friLabel");
+const satLabel = document.getElementById("satLabel");
+const sunLabel = document.getElementById("sunLabel");
+
 // Convert weekday
 var weekday = new Array(7);
 weekday[0] = "Sunday";
@@ -38,6 +47,66 @@ weekday[3] = "Wednesday";
 weekday[4] = "Thursday";
 weekday[5] = "Friday";
 weekday[6] = "Saturday";
+
+
+/**
+ * Date Picker
+ */
+var monDatePicker = createDatePicker();
+var tueDatePicker = createDatePicker();
+var wedDatePicker = createDatePicker();
+var thuDatePicker = createDatePicker();
+var friDatePicker = createDatePicker();
+var satDatePicker = createDatePicker();
+var sunDatePicker = createDatePicker();
+var timeDatePicker = createDatePicker();
+
+function createDatePicker() {
+    return new mdDateTimePicker.default({
+        type: 'time',
+        init: moment('22:0', 'H:m'),
+        mode: true,
+        orientation: 'PORTRAIT'
+    });
+}
+
+/**
+ * Label event Listener
+ */
+addDateEventListener(sunLabel, sunDatePicker, 0);
+addDateEventListener(monLabel, monDatePicker, 1);
+addDateEventListener(tueLabel, tueDatePicker, 2);
+addDateEventListener(wedLabel, wedDatePicker, 3);
+addDateEventListener(thuLabel, thuDatePicker, 4);
+addDateEventListener(friLabel, friDatePicker, 5);
+addDateEventListener(satLabel, satDatePicker, 6);
+
+function addDateEventListener(label, datePicker, day) {
+    label.day = day
+    label.addEventListener('click', () => {
+        datePicker.toggle();
+    });
+    datePicker.trigger = label;
+
+    label.addEventListener('onOk', () => {
+        var time = new Date(datePicker.time);
+        makeRequest('setschedule?param=' + label.day + ' ' +  time.getHours() + ' ' + time.getMinutes(), null);
+        setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
+    });
+}
+
+// Set time of robot
+timeText.addEventListener('click', () => {
+    timeDatePicker.toggle();
+});
+timeDatePicker.trigger = timeText;
+
+timeText.addEventListener('onOk', () => {
+    var time = new Date(timeDatePicker.time);
+    makeRequest('settime?param=' + time.getDay() + ' ' + time.getHours() + ' ' + time.getMinutes());
+    setTimeout(function () { makeRequest('gettime', getTime); }, 2000);
+});
+
 
 
 /**
@@ -91,27 +160,28 @@ scheduleBtn.addEventListener('click', () => {
 /**
  * Switch schedule states
  */
-switchMon.addEventListener('click', function () { setSchedule(switchMon, '1'); });
-switchTue.addEventListener('click', function () { setSchedule(switchTue, '2'); });
-switchWed.addEventListener('click', function () { setSchedule(switchWed, '3'); });
-switchThu.addEventListener('click', function () { setSchedule(switchWed, '4'); });
-switchFri.addEventListener('click', function () { setSchedule(switchFri, '5'); });
-switchSat.addEventListener('click', function () { setSchedule(switchSat, '6'); });
-switchSun.addEventListener('click', function () { setSchedule(switchSun, '0'); });
+switchSun.addEventListener('click', function () { setSchedule(switchSun, '0', sunDatePicker); });
+switchMon.addEventListener('click', function () { setSchedule(switchMon, '1', monDatePicker); });
+switchTue.addEventListener('click', function () { setSchedule(switchTue, '2', tueDatePicker); });
+switchWed.addEventListener('click', function () { setSchedule(switchWed, '3', wedDatePicker); });
+switchThu.addEventListener('click', function () { setSchedule(switchWed, '4', thuDatePicker); });
+switchFri.addEventListener('click', function () { setSchedule(switchFri, '5', friDatePicker); });
+switchSat.addEventListener('click', function () { setSchedule(switchSat, '6', satDatePicker); });
 
 /**
  * Toggles the schedule day on off on switch click
  * @param {*} switchElement The button that was clicke
  * @param {*} day The day to be modified
  */
-function setSchedule(switchElement, day, ) {
+function setSchedule(switchElement, day, datePicker) {
     if (switchElement.checked === true) {
-        makeRequest('setschedule?param=' + day + ' 8 0', null);
+        //makeRequest('setschedule?param=' + day + ' 8 0', null);
+        datePicker.toggle();
     } else if (switchElement.checked === false) {
-        makeRequest('setschedule?param=' + day + ' 8 0 None', null);
+        makeRequest('setschedule?param=' + day + ' 0 0 None', null);
     }
 
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
+    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 6000);
 }
 
 /**
@@ -130,13 +200,13 @@ function getSchedule() {
             scheduleBtn.innerHTML = "Enable Schedule"
         }
 
-        setScheduleToggleBtn(data.dutyDays[0], switchSun);
-        setScheduleToggleBtn(data.dutyDays[1], switchMon);
-        setScheduleToggleBtn(data.dutyDays[2], switchTue);
-        setScheduleToggleBtn(data.dutyDays[3], switchWed);
-        setScheduleToggleBtn(data.dutyDays[4], switchThu);
-        setScheduleToggleBtn(data.dutyDays[4], switchFri);
-        setScheduleToggleBtn(data.dutyDays[6], switchSat);
+        setScheduleToggleBtn(data.dutyDays[0], switchSun, sunLabel);
+        setScheduleToggleBtn(data.dutyDays[1], switchMon, monLabel);
+        setScheduleToggleBtn(data.dutyDays[2], switchTue, tueLabel);
+        setScheduleToggleBtn(data.dutyDays[3], switchWed, wedLabel);
+        setScheduleToggleBtn(data.dutyDays[4], switchThu, thuLabel);
+        setScheduleToggleBtn(data.dutyDays[5], switchFri, friLabel);
+        setScheduleToggleBtn(data.dutyDays[6], switchSat, satLabel);
     } else {
         // handle more HTTP response codes here;
     }
@@ -147,11 +217,13 @@ function getSchedule() {
  * @param {*} day The duty day
  * @param {*} toggleSwitch The switch to be toggled
  */
-function setScheduleToggleBtn(day, toggleSwitch) {
+function setScheduleToggleBtn(day, toggleSwitch, label) {
     if (day.includes("None")) {
         toggleSwitch.parentElement.MaterialSwitch.off();
+        label.innerHTML = day.slice(0, 3);
     } else {
         toggleSwitch.parentElement.MaterialSwitch.on();
+        label.innerHTML = day;
     }
 }
 
