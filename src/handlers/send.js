@@ -52,23 +52,39 @@ SendHandler.prototype.getCharger = function (request, result) {
         json: false,
     }
 
+    var state = {
+        batterylevel: 0,
+        ischarging: 0,
+        isextpower: 0,
+        error: 'None'
+    };
+
     rp(options)
         .then(content => {
 
             // Get rid of the first two lines and last three => debug data
             var rawData = content.split("\n");
             chargerData = rawData.slice(2, rawData.length - 2);
-            
-            var batteryLevel = chargerData[0].split(",");
-            var isCharging = chargerData[2].split(",");
-            var isExtPower = chargerData[8].split(",");
 
-            var state = {
-                batterylevel: batteryLevel[1],
-                ischarging: isCharging[1],
-                isextpower: isExtPower[1]
-            };
-            
+            state.batterylevel = parseInt(chargerData[0].split(",")[1]);
+            state.ischarging = parseInt(chargerData[2].split(",")[1]);
+            state.isextpower = parseInt(chargerData[8].split(",")[1]);
+
+            var options2 = {
+                uri: BASE_URL_COMMAND + 'GetErr',
+                json: false,
+            }
+
+            return rp(options2);
+
+        }).then(content => {
+
+            var error = content.split("\n")[1];
+
+            if (error != "\r") {
+                state.error = error;
+            }
+
             result.status(200).send(state);
         })
 
@@ -123,7 +139,27 @@ SendHandler.prototype.getLDSScan = function (request, result) {
 
 SendHandler.prototype.getTime = function (request, result) {
     // Day HH:MM:SS
-    sendRequest(BASE_URL_COMMAND + 'GetTime', result);
+    //sendRequest(BASE_URL_COMMAND + 'GetTime', result);
+
+    var options = {
+        uri: BASE_URL_COMMAND + 'GetTime',
+        json: false,
+    }
+
+    rp(options)
+        .then(content => {
+
+            var robotTime = '00:00';
+
+            var rawData = content.split("\n");
+            var robotTime = rawData[1].slice(0, rawData[1].length - 4);
+
+            result.status(200).send(robotTime);
+        })
+
+        .catch(error => {
+            result.status(500).send(error);
+        });
 }
 
 SendHandler.prototype.getSchedule = function (request, result) {
@@ -152,8 +188,8 @@ SendHandler.prototype.getSchedule = function (request, result) {
 
             for (var itr = 0; itr < 7; itr++) {
 
-                nextDutyIdx = day + 1;
-                
+                nextDutyIdx++;
+
                 // Check if the next day is SUN
                 if (nextDutyIdx >= dutyDays.length) {
                     nextDutyIdx = 0;
@@ -169,9 +205,10 @@ SendHandler.prototype.getSchedule = function (request, result) {
 
             var nextSchedule = {
                 isEnabled: enabled,
-                nextDuty: nextDutyDay 
+                nextDuty: nextDutyDay,
+                dutyDays: dutyDays
             }
-            
+
             result.status(200).send(nextSchedule);
         })
 
@@ -195,11 +232,11 @@ SendHandler.prototype.playSound = function (request, result) {
 // Set
 // ===========================
 SendHandler.prototype.setSchedule = function (request, result) {
-    sendRequest(BASE_URL_COMMAND + 'SetSchedule', result);
+    sendRequest(BASE_URL_COMMAND + 'SetSchedule' + ' ' + request.query.param, result);
 }
 
 SendHandler.prototype.setTime = function (request, result) {
-    sendRequest(BASE_URL_COMMAND + 'SetTime', result);
+    sendRequest(BASE_URL_COMMAND + 'SetTime' + ' ' + request.query.param, result);
 }
 
 
