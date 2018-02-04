@@ -152,7 +152,7 @@ SendHandler.prototype.getSchedule = function (request, result) {
 
             for (var itr = 0; itr < 7; itr++) {
 
-                nextDutyIdx = day + 1;
+                nextDutyIdx++;
                 
                 // Check if the next day is SUN
                 if (nextDutyIdx >= dutyDays.length) {
@@ -169,7 +169,8 @@ SendHandler.prototype.getSchedule = function (request, result) {
 
             var nextSchedule = {
                 isEnabled: enabled,
-                nextDuty: nextDutyDay 
+                nextDuty: nextDutyDay,
+                dutyDays: dutyDays
             }
             
             result.status(200).send(nextSchedule);
@@ -195,7 +196,8 @@ SendHandler.prototype.playSound = function (request, result) {
 // Set
 // ===========================
 SendHandler.prototype.setSchedule = function (request, result) {
-    sendRequest(BASE_URL_COMMAND + 'SetSchedule', result);
+    console.log(request.query.param)
+    sendRequest(BASE_URL_COMMAND + 'SetSchedule' + ' ' + request.query.param, result);
 }
 
 SendHandler.prototype.setTime = function (request, result) {
