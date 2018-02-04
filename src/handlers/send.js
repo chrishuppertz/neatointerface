@@ -81,8 +81,6 @@ SendHandler.prototype.getCharger = function (request, result) {
 
             var error = content.split("\n")[1];
 
-            console.log(error);
-
             if (error != "\r") {
                 state.error = error;
             }
@@ -234,7 +232,6 @@ SendHandler.prototype.playSound = function (request, result) {
 // Set
 // ===========================
 SendHandler.prototype.setSchedule = function (request, result) {
-    console.log(request.query.param)
     sendRequest(BASE_URL_COMMAND + 'SetSchedule' + ' ' + request.query.param, result);
 }
 

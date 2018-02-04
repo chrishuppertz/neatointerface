@@ -4,13 +4,16 @@
  */
 
 
+// Cleaning state
 const stateIcon = document.getElementById("iconState");
 const stateText = document.getElementById("stateText");
 
+// Text elements
 const scheduleText = document.getElementById("scheduleText");
 const errorText = document.getElementById("errorText");
 const timeText = document.getElementById("timeText");
 
+// Switch elements
 const switchMon = document.getElementById("list-switch-mon");
 const switchTue = document.getElementById("list-switch-tue");
 const switchWed = document.getElementById("list-switch-wed");
@@ -19,12 +22,14 @@ const switchFri = document.getElementById("list-switch-fri");
 const switchSat = document.getElementById("list-switch-sat");
 const switchSun = document.getElementById("list-switch-sun");
 
+// Buttons
 const cleanHouseBtn = document.getElementById("cleanHouseBtn");
 const cleanSpotBtn = document.getElementById("cleanSpotBtn");
 const stopBtn = document.getElementById("stopBtn");
 const scheduleBtn = document.getElementById("scheduleOnOffBtn");
 const searchBtn = document.getElementById("searchBtn");
 
+// Convert weekday
 var weekday = new Array(7);
 weekday[0] = "Sunday";
 weekday[1] = "Monday";
@@ -35,23 +40,39 @@ weekday[5] = "Friday";
 weekday[6] = "Saturday";
 
 
+/**
+ * Get initial states of the robot
+ */
+makeRequest('getschedule', getSchedule);
+makeRequest('gettime', getTime);
+makeRequest('getcharger', getState);
+
+
+/**
+ * Button listeners
+ */
+
+// Search => Play Sound
 searchBtn.addEventListener('click', () => {
     makeRequest('playsound', null);
 });
 
+// Clean House
 cleanHouseBtn.addEventListener('click', () => {
     makeRequest('cleanhouse', null);
-    makeRequest('getcharger', getState);
+    setTimeout(function () { makeRequest('getcharger', getState); }, 3000);
 });
 
+// Clean Spot
 cleanSpotBtn.addEventListener('click', () => {
     makeRequest('cleanspot', null);
-    makeRequest('getcharger', getState);
+    setTimeout(function () { makeRequest('getcharger', getState); }, 3000);
 });
 
+// Stop cleaning
 stopBtn.addEventListener('click', () => {
     makeRequest('cleanstop', null);
-    makeRequest('getcharger', getState);
+    setTimeout(function () { makeRequest('getcharger', getState); }, 3000);
 });
 
 /**
@@ -67,90 +88,35 @@ scheduleBtn.addEventListener('click', () => {
     setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
 });
 
+/**
+ * Switch schedule states
+ */
+switchMon.addEventListener('click', function () { setSchedule(switchMon, '1'); });
+switchTue.addEventListener('click', function () { setSchedule(switchTue, '2'); });
+switchWed.addEventListener('click', function () { setSchedule(switchWed, '3'); });
+switchThu.addEventListener('click', function () { setSchedule(switchWed, '4'); });
+switchFri.addEventListener('click', function () { setSchedule(switchFri, '5'); });
+switchSat.addEventListener('click', function () { setSchedule(switchSat, '6'); });
+switchSun.addEventListener('click', function () { setSchedule(switchSun, '0'); });
 
-switchMon.addEventListener('click', () => {
-
-    if (switchMon.checked === true) {
-        makeRequest('setschedule?param=1 8 0', null);
-    } else if (switchMon.checked === false) {
-        makeRequest('setschedule?param=1 8 0 None', null);
+/**
+ * Toggles the schedule day on off on switch click
+ * @param {*} switchElement The button that was clicke
+ * @param {*} day The day to be modified
+ */
+function setSchedule(switchElement, day, ) {
+    if (switchElement.checked === true) {
+        makeRequest('setschedule?param=' + day + ' 8 0', null);
+    } else if (switchElement.checked === false) {
+        makeRequest('setschedule?param=' + day + ' 8 0 None', null);
     }
 
     setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
+}
 
-switchTue.addEventListener('click', () => {
-
-    if (switchTue.checked === true) {
-        makeRequest('setschedule?param=2 8 0', null);
-    } else if (switchTue.checked === false) {
-        makeRequest('setschedule?param=2 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-switchWed.addEventListener('click', () => {
-
-    if (switchWed.checked === true) {
-        makeRequest('setschedule?param=3 8 0', null);
-    } else if (switchWed.checked === false) {
-        makeRequest('setschedule?param=3 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-switchThu.addEventListener('click', () => {
-
-    if (switchThu.checked === true) {
-        makeRequest('setschedule?param=4 8 0', null);
-    } else if (switchThu.checked === false) {
-        makeRequest('setschedule?param=4 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-switchFri.addEventListener('click', () => {
-
-    if (switchFri.checked === true) {
-        makeRequest('setschedule?param=5 8 0', null);
-    } else if (switchFri.checked === false) {
-        makeRequest('setschedule?param=5 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-switchSat.addEventListener('click', () => {
-
-    if (switchSat.checked === true) {
-        makeRequest('setschedule?param=6 8 0', null);
-    } else if (switchSat.checked === false) {
-        makeRequest('setschedule?param=6 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-switchSun.addEventListener('click', () => {
-
-    if (switchSun.checked === true) {
-        makeRequest('setschedule?param=0 8 0', null);
-    } else if (switchSun.checked === false) {
-        makeRequest('setschedule?param=0 8 0 None', null);
-    }
-
-    setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
-});
-
-//makeRequest('geterror', getError);
-makeRequest('getschedule', getSchedule);
-makeRequest('gettime', getTime);
-makeRequest('getcharger', getState);
-
-
+/**
+ * Get and set the schedule accordingly
+ */
 function getSchedule() {
     if (this.status == '200') {
 
@@ -164,66 +130,34 @@ function getSchedule() {
             scheduleBtn.innerHTML = "Enable Schedule"
         }
 
-        if (data.dutyDays[0].includes("None")) {
-            switchSun.parentElement.MaterialSwitch.off();
-        } else {
-            switchSun.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[1].includes("None")) {
-            switchMon.parentElement.MaterialSwitch.off();
-        } else {
-            switchMon.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[2].includes("None")) {
-            switchTue.parentElement.MaterialSwitch.off();
-        } else {
-            switchTue.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[3].includes("None")) {
-            switchWed.parentElement.MaterialSwitch.off();
-        } else {
-            switchWed.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[4].includes("None")) {
-            switchThu.parentElement.MaterialSwitch.off();
-        } else {
-            switchThu.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[5].includes("None")) {
-            switchFri.parentElement.MaterialSwitch.off();
-        } else {
-            switchFri.parentElement.MaterialSwitch.on();
-        }
-
-        if (data.dutyDays[6].includes("None")) {
-            switchSat.parentElement.MaterialSwitch.off();
-        } else {
-            switchSat.parentElement.MaterialSwitch.on();
-        }
+        setScheduleToggleBtn(data.dutyDays[0], switchSun);
+        setScheduleToggleBtn(data.dutyDays[1], switchMon);
+        setScheduleToggleBtn(data.dutyDays[2], switchTue);
+        setScheduleToggleBtn(data.dutyDays[3], switchWed);
+        setScheduleToggleBtn(data.dutyDays[4], switchThu);
+        setScheduleToggleBtn(data.dutyDays[4], switchFri);
+        setScheduleToggleBtn(data.dutyDays[6], switchSat);
     } else {
         // handle more HTTP response codes here;
     }
 }
 
-function getError() {
-    if (this.status == '200') {
-        var response = this.response;
-
-        if (!response.includes("GetErr")) {
-            errorText.text = response;
-        } else {
-            errorText.text = "i.O.";
-        }
+/**
+ * Toggles a switch button based on the day paramter
+ * @param {*} day The duty day
+ * @param {*} toggleSwitch The switch to be toggled
+ */
+function setScheduleToggleBtn(day, toggleSwitch) {
+    if (day.includes("None")) {
+        toggleSwitch.parentElement.MaterialSwitch.off();
     } else {
-        // handle more HTTP response codes here;
+        toggleSwitch.parentElement.MaterialSwitch.on();
     }
 }
 
+/**
+ * Get the state of the robot (charging, cleaning, battery level)
+ */
 function getState() {
     if (this.status == '200') {
 
@@ -239,8 +173,6 @@ function getState() {
         } else {
             errorText.text = data.error;
         }
-
-        console.log(data);
 
         // Ready for duty
         if (batteryLevel >= 80 && isExtPower == 1 && isCharging == 0) {
@@ -264,6 +196,9 @@ function getState() {
     }
 }
 
+/**
+ * Get the time of the robot and the current client time
+ */
 function getTime() {
     if (this.status == '200') {
 
@@ -275,7 +210,11 @@ function getTime() {
     }
 }
 
-
+/**
+ * Make a request to the server
+ * @param {*} uri The url to be called
+ * @param {*} callback The callback function to be execute on success
+ */
 function makeRequest(uri, callback) {
     var xhttp = new XMLHttpRequest();
     xhttp.onload = callback;
@@ -284,6 +223,10 @@ function makeRequest(uri, callback) {
     xhttp.send();
 }
 
+/**
+ * Plot the error to the console
+ * @param {*} error 
+ */
 function error(error) {
     console.log(this);
     console.error(error);
