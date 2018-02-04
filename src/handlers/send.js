@@ -236,7 +236,7 @@ SendHandler.prototype.setSchedule = function (request, result) {
 }
 
 SendHandler.prototype.setTime = function (request, result) {
-    sendRequest(BASE_URL_COMMAND + 'SetTime', result);
+    sendRequest(BASE_URL_COMMAND + 'SetTime' + ' ' + request.query.param, result);
 }
 
 
