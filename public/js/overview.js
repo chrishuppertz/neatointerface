@@ -9,6 +9,7 @@ const stateText = document.getElementById("stateText");
 
 const scheduleText = document.getElementById("scheduleText");
 const errorText = document.getElementById("errorText");
+const timeText = document.getElementById("timeText");
 
 const switchMon = document.getElementById("list-switch-mon");
 const switchTue = document.getElementById("list-switch-tue");
@@ -23,6 +24,15 @@ const cleanSpotBtn = document.getElementById("cleanSpotBtn");
 const stopBtn = document.getElementById("stopBtn");
 const scheduleBtn = document.getElementById("scheduleOnOffBtn");
 const searchBtn = document.getElementById("searchBtn");
+
+var weekday = new Array(7);
+weekday[0] = "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
 
 
 searchBtn.addEventListener('click', () => {
@@ -135,13 +145,11 @@ switchSun.addEventListener('click', () => {
     setTimeout(function () { makeRequest('getschedule', getSchedule); }, 3000);
 });
 
-
-
-
-
-makeRequest('getcharger', getState);
+//makeRequest('geterror', getError);
 makeRequest('getschedule', getSchedule);
-makeRequest('geterror', getError);
+makeRequest('gettime', getTime);
+makeRequest('getcharger', getState);
+
 
 function getSchedule() {
     if (this.status == '200') {
@@ -221,10 +229,18 @@ function getState() {
 
         var data = JSON.parse(this.response);
 
-
         var isCharging = data.ischarging;
         var isExtPower = data.isextpower;
         var batteryLevel = data.batterylevel;
+        var error = data.error;
+
+        if (error.includes("None")) {
+            errorText.text = "i.O.";
+        } else {
+            errorText.text = data.error;
+        }
+
+        console.log(data);
 
         // Ready for duty
         if (batteryLevel >= 80 && isExtPower == 1 && isCharging == 0) {
@@ -234,10 +250,26 @@ function getState() {
             stateIcon.innerHTML = 'battery_charging_full';
             stateText.text = "Charging - " + data.batterylevel + " %";
         } else {
-            stateIcon.innerHTML = 'near_me';
-            stateText.text = "Moving - " + data.batterylevel + " %";
+            if (error.includes("None")) {
+                stateIcon.innerHTML = 'near_me';
+                stateText.text = "Moving - " + data.batterylevel + " %";
+            } else {
+                stateIcon.innerHTML = 'all_out';
+                stateText.text = "Stoped - " + data.batterylevel + " %";
+            }
         }
 
+    } else {
+        // handle more HTTP response codes here;
+    }
+}
+
+function getTime() {
+    if (this.status == '200') {
+
+        var date = new Date();
+
+        timeText.text = this.response + ' --- ' + weekday[date.getDay()] + ' ' + date.getHours() + ':' + date.getMinutes();
     } else {
         // handle more HTTP response codes here;
     }
