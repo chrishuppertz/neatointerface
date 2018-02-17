@@ -10,7 +10,8 @@ var SendHandler = function () { };
 
 
 const BASE_URL = 'http://neato.local/';
-const BASE_URL_COMMAND = 'http://neato.local/sendcommand?command='
+const BASE_URL_COMMAND = 'http://neato.local/sendcommand?command=';
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 /**
  * GetHandler for Config Page
@@ -179,16 +180,18 @@ SendHandler.prototype.getSchedule = function (request, result) {
             var enabled = !scheduleData[0].includes("Disabled");
             var dutyDays = scheduleData.slice(1, scheduleData.length);
 
+
+
             // Check next duty
             var date = new Date();
             var day = date.getDay();
+            var hour = date.getHours();
             var nextDutyIdx = day;
 
             var nextDutyDay = "";
 
+            
             for (var itr = 0; itr < 7; itr++) {
-
-                nextDutyIdx++;
 
                 // Check if the next day is SUN
                 if (nextDutyIdx >= dutyDays.length) {
@@ -196,10 +199,21 @@ SendHandler.prototype.getSchedule = function (request, result) {
                 }
 
                 // Break if a none "None" day was found
-                if (!dutyDays[nextDutyIdx].includes("None")) {
-                    nextDutyDay = dutyDays[nextDutyIdx];
-                    break;
+                if (!dutyDays[nextDutyIdx].includes('None')) {
+                    
+                    if (dutyDays[nextDutyIdx].includes(DAYS[day])) {
+
+                        if (hour < parseInt(dutyDays[nextDutyIdx].slice(4, 6))) {
+                            nextDutyDay = dutyDays[nextDutyIdx];
+                            break;
+                        }
+                    } else {
+                        nextDutyDay = dutyDays[nextDutyIdx];
+                        break;
+                    }
                 }
+
+                nextDutyIdx++;
 
             }
 
