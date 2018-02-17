@@ -5,7 +5,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
-
+var cors = require('cors');
 
 var app = express();
 
@@ -39,6 +39,10 @@ var send = new SendHandler();
 /**
  * GET functions
  */
+app.use(cors());
+app.use(express.static(__dirname + '/public', { index: 'index.html', etag: false, maxage: 1000 }));
+
+
 app.get('/config', send.getConfig);
 app.get('/reboot', send.reboot);
 
@@ -59,9 +63,7 @@ app.get('/playsound', send.playSound);
 app.get('/settime', send.setTime);
 app.get('/setschedule', send.setSchedule);
 
-app.use(express.static(__dirname + '/public', { index: 'index.html', etag: false, maxage: 1000 }));
 
-//app.post('/savependelbusrawdata', handlers.get.savePendelbusRawData);
 
 
 
@@ -69,7 +71,7 @@ app.use(express.static(__dirname + '/public', { index: 'index.html', etag: false
 // =============================================================================
 console.log('Starting web server...');
 
-var port = process.env.PORT || 80
+var port = process.env.PORT || 8001
 app.listen(port);
 
 console.log("Setup complete. Port: %d   Mode: %s.", port, app.settings.env);
